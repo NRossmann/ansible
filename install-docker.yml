@@ -18,7 +18,11 @@
     
     - name: " Installing Docker latest version"
       yum:
-        name: docker-ce
+        name: 
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
         state: present
     - name: " Starting and Enabling Docker service"
       service:
