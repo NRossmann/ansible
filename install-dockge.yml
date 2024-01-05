@@ -1,0 +1,23 @@
+---
+
+- hosts: 10.3.1.14
+  become: yes
+  tasks:
+    - name: "Create Dockge Dirs"
+      ansible.builtin.file:
+        path: 
+          - /opt/stacks
+          - /opt/dockge
+        state: directory
+        mode: '0755'
+
+    - name: "Download Dockge Compose"
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/louislam/dockge/master/compose.yaml
+        dest: /opt/dockge/compose.yml
+        mode: '0440'
+    
+    - name: "Start Dockge"
+      community.docker.docker_compose:
+        project_src: /opt/dockge
+      register: output
