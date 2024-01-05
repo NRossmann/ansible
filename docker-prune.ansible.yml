@@ -1,0 +1,7 @@
+---
+
+- hosts: production
+  become: yes
+  tasks:
+    - name: "Prune Volumes"
+      ansible.builtin.command: "docker volume prune -af"
