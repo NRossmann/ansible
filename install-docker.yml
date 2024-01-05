@@ -6,12 +6,12 @@
     - name: "Install dependencies"
       yum:
         name: "{{ item }}"
-      state: latest
-      with_items:
-        - yum-utils
-        - device-mapper-persistent-data
-        - lvm2
-        - name: "Configuring docker-ce repo"
+        state: latest
+        with_items:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+    - name: "Configuring docker-ce repo"
       get_url:
         url: https://download.docker.com/linux/centos/docker-ce.repo
         dest: /etc/yum.repos.d/docker-ce.repo
