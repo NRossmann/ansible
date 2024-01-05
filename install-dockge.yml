@@ -5,11 +5,13 @@
   tasks:
     - name: "Create Dockge Dirs"
       ansible.builtin.file:
-        path: 
-          - /opt/stacks
-          - /opt/dockge
+        path: /opt/stacks
         state: directory
-        mode: '0755'
+    
+    - name: "Create Dockge Dir2"
+      ansible.builtin.file:
+        path: /opt/dockge
+        state: directory
 
     - name: "Download Dockge Compose"
       ansible.builtin.get_url:
