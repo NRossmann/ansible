@@ -34,6 +34,6 @@
         timeout: 200
     
     - name: "Start Dockge"
-      community.docker.docker_compose:
-        project_src: /opt/dockge
-      register: output
+      ansible.builtin.command: "docker compose up -d"
+      args:
+        chdir: /opt/dockge
