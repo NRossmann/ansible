@@ -12,7 +12,9 @@
 
     - name: "Pip install docker"
       ansible.builtin.pip:
-        name: docker
+        name: 
+          - docker
+          - docker-compose
 
     - name: "Create Dockge Dirs"
       ansible.builtin.file:
