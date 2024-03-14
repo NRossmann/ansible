@@ -5,3 +5,8 @@
   tasks:
     - name: Run whoami
       command: whoami
+      register: whoami_output
+
+    - name: Display whoami output
+      debug:
+        var: whoami_output.stdout
