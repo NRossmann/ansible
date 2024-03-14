@@ -1,9 +1,10 @@
 ---
 - name: Run whoami with elevated privileges
   hosts: all
-  become: true
   tasks:
     - name: Run whoami
+      become: true
+      become_method: ansible.builtin.sudo
       command: whoami
       register: whoami_output
 
