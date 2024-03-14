@@ -1,0 +1,8 @@
+---
+
+- name: Test Play to Ping all hosts
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Test ICMP Ping 
+      ping:
