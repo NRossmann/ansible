@@ -1,0 +1,7 @@
+---
+- name: Run whoami with elevated privileges
+  hosts: all
+  become: true
+  tasks:
+    - name: Run whoami
+      command: whoami
