@@ -13,4 +13,4 @@
     - name: Führe Apt Upgrade durch
       ansible.builtin.apt:
         upgrade: true
-      when: ansible_distribution == 'Debian'
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
