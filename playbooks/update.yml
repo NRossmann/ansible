@@ -2,10 +2,11 @@
 
 - name: Update alle Pakete
   hosts: all
+  become: yes
   tasks:
     - name: Führe DNF Update aus
       become: true
-      become_method: sudo
+      become_method: ansible.builtin.sudo
       ansible.builtin.dnf:
         name: "*"
         state: latest
