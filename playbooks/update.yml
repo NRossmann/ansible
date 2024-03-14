@@ -5,6 +5,7 @@
   tasks:
     - name: Führe DNF Update aus
       become: true
+      become_method: sudo
       ansible.builtin.dnf:
         name: "*"
         state: latest
