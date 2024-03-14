@@ -4,4 +4,4 @@
   tasks:
     - name: Show Ansible Facts
       debug:
-        var: ansible_facts
+        msg: "Distribution on {{ inventory_hostname }} is {{ ansible_distribution }}"
