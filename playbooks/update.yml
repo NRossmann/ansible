@@ -5,14 +5,14 @@
   become: true
   tasks:
     - name: Führe DNF Update aus
-      hosts: rocky, fedora 
       dnf:
         name: "*"
         state: latest
+      when: ansible_distribution == 'Rocky' or ansible_distribution == 'Fedora'
       
     
     - name: Führe Apt Upgrade durch
-      hosts: proxmox 
       apt:
         upgrade: yes
+      when: ansible_distribution == 'Debian'
       
