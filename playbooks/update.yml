@@ -5,12 +5,14 @@
   become: true
   tasks:
     - name: Führe DNF Update aus
+      hosts: rocky, fedora 
       dnf:
         name: "*"
         state: latest
-      hosts: rocky, fedora
+      
     
     - name: Führe Apt Upgrade durch
+      hosts: proxmox 
       apt:
         upgrade: yes
-      hosts: proxmox
+      
