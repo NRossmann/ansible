@@ -1,0 +1,16 @@
+---
+
+- name: Update alle Pakete
+  hosts: all
+  become: true
+  tasks:
+    - name: Führe DNF Update aus
+      dnf:
+        name: "*"
+        state: latest
+      hosts: rocky, fedora
+    
+    - name: Führe Apt Upgrade durch
+      apt:
+        upgrade: yes
+      hosts: proxmox
