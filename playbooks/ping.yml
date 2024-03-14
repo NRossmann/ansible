@@ -4,5 +4,5 @@
   hosts: all
   gather_facts: false
   tasks:
-    - name: Test ICMP Ping 
+    - name: Test ICMP Ping
       ping:
