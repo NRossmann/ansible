@@ -5,14 +5,12 @@
   become: true
   tasks:
     - name: Führe DNF Update aus
-      dnf:
+      ansible.builtin.dnf:
         name: "*"
         state: latest
+        update_only: true
       when: ansible_distribution == 'Rocky' or ansible_distribution == 'Fedora'
-      
-    
     - name: Führe Apt Upgrade durch
-      apt:
-        upgrade: yes
+      ansible.builtin.apt:
+        upgrade: true
       when: ansible_distribution == 'Debian'
-      
