@@ -4,7 +4,6 @@
   tasks:
     - name: Run whoami
       become: true
-      become_method: ansible.builtin.sudo
       command: whoami
       register: whoami_output
 
