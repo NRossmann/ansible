@@ -1,6 +1,7 @@
 ---
 - name: Check Docker container updates
   hosts: fedora
+  gather_facts: false
   tasks:
     - name: Get running Docker containers
       command: docker ps --format '{{.Names}}'
