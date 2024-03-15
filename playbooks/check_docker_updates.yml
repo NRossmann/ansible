@@ -5,7 +5,7 @@
   tasks:
     - name: Get running Docker containers
       shell: 
-      cmd: docker ps --format {{.Names}} 
+        cmd: docker ps --format {{.Names}} 
       register: docker_containers
       changed_when: false
 
