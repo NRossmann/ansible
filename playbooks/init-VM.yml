@@ -106,7 +106,7 @@
           changed_when: git_user_email.rc != 0
 
         - name: Clone dotfiles repository
-         git:
+          git:
            repo: https://github.com/NRossmann/dotfiles.git
            dest: "{{ ansible_env.HOME }}/dotfiles"
            clone: yes
