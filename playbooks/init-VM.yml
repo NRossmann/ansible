@@ -4,9 +4,6 @@
   become: true
   become_method: ansible.builtin.sudo
 
-  vars:
-    ansible_user_password: "{{ lookup('env', 'ANSIBLE_PASSWORD') | password_hash('sha512') }}"
-
   tasks:
     - name: Intial Update and Install of requierd packages
       block:
@@ -60,13 +57,13 @@
           service:
             name: docker
             state: started
-            enabled: yes
+            enabled: true
 
         - name: Add user 'nross' to the docker group
           user:
-            name: "nross"
+            name: nross
             groups: docker
-            append: yes
+            append: true
 
     - name: Add Ansible User
       block:
@@ -74,13 +71,13 @@
           user:
             name: ansible
             shell: /bin/bash
-            password: "{{ ansible_user_password }}"
+            password: "$y$j9T$mUpqeDgKh9/bTSQovbkJQ0$TMsoPVAA6aYml0.QsKqByqjk2p169SY2GPNkWXzyK0/"
             groups: wheel, docker
-            append: yes
+            append: true
 
-        - name: Ensure .ssh directory exists for ansible user
+        - name: Ensure home dir exists for ansible user
           file:
-            path: /home/ansible/.ssh
+            path: /home/ansible
             state: directory
             owner: ansible
             group: ansible
@@ -105,29 +102,30 @@
           command: git config --global user.email nrossmann@gmx.de
           register: git_user_email
           changed_when: git_user_email.rc != 0
+        
+        - name: Ensure 
+          file:
+            path: /home/ansible/.ssh
+            state: directory
+            owner: ansible
+            group: ansible
+            mode: "0700"
 
         - name: Clone dotfiles repository
           git:
             repo: https://github.com/NRossmann/dotfiles.git
-            dest: "{{ ansible_env.HOME }}/dotfiles"
+            dest: "/home/nross/dotfiles"
             clone: true
 
         - name: Delete .bashrc file
           file:
-            path: "{{ ansible_env.HOME }}/.bashrc"
+            path: "/home/nross/.bashrc"
             state: absent
-
-        - name: Change directory to dotfiles
-          shell: cd "{{ ansible_env.HOME }}/dotfiles"
-          args:
-            chdir: "{{ ansible_env.HOME }}/dotfiles"
-          register: cd_output
-          changed_when: false
 
         - name: Stow dotfiles
           shell: stow */
           args:
-            chdir: "{{ ansible_env.HOME }}/dotfiles"
+            chdir: "/home/nross/dotfiles"
           when: cd_output is succeeded
 
     - name: Start Dockge
