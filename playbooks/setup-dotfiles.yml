@@ -1,0 +1,32 @@
+---
+- name: Initialise my Dotfiles
+  hosts: all
+
+  tasks:
+
+    - name: Set Git user.name
+      ansible.builtin.command: git config --global user.name "NRossmann"
+      register: git_user_name
+      changed_when: git_user_name.rc != 0
+
+    - name: Set Git user.email
+      ansible.builtin.command: git config --global user.email nrossmann@gmx.de
+      register: git_user_email
+      changed_when: git_user_email.rc != 0
+
+    - name: Clone dotfiles repository
+      ansible.builtin.git:
+        repo: https://github.com/NRossmann/dotfiles.git
+        dest: "/home/nross/dotfiles"
+        clone: true
+
+    - name: Delete .bashrc file
+      ansible.builtin.file:
+        path: "/home/nross/.bashrc"
+        state: absent
+
+    - name: Stow dotfiles
+      ansible.builtin.shell: stow */
+      args:
+        chdir: "/home/nross/dotfiles"
+      when: cd_output is succeeded
