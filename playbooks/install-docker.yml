@@ -1,0 +1,50 @@
+---
+- name: Installiere Docker und mehr
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install required packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - dnf-plugins-core
+        - dnf-utils
+        - device-mapper-persistent-data
+        - lvm2
+        - git
+        - which
+        - stow
+        - neovim
+        - tmux
+        - npm
+        - fd-find
+        - the_silver_searcher
+        - nmap
+
+    - name: Add Docker CE repository
+      ansible.builtin.command:
+        cmd: dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+
+    - name: Install Docker CE
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-compose-plugin
+
+    - name: Start Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add user 'nross' to the docker group
+      ansible.builtin.user:
+        name: nross
+        groups: docker
+        append: true
