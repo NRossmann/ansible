@@ -59,11 +59,10 @@
         - /opt/stacks
 
     - name: Download compose.yaml file
-      ansible.builtin.get_url:
-        url: "https://raw.githubusercontent.com/louislam/dockge/master/compose.yaml"
-        dest: "/opt/dockge/compose.yml"
-        mode: "764"
-        validate_certs: false
+      ansible.builtin.shell: curl https://raw.githubusercontent.com/louislam/dockge/master/compose.yaml --output compose.yaml
+      args:
+        chdir: /opt/dockge
+        
 
     - name: Create and start services
       community.docker.docker_compose:
