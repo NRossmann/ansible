@@ -1,0 +1,29 @@
+---
+- name: Erstelle den Ansible User
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Add user 'ansible'
+      ansible.builtin.user:
+        name: ansible
+        shell: /bin/bash
+        password: "$y$j9T$mUpqeDgKh9/bTSQovbkJQ0$TMsoPVAA6aYml0.QsKqByqjk2p169SY2GPNkWXzyK0/"
+        groups: wheel, docker
+        append: true
+
+    - name: Ensure home dir exists for ansible user
+      ansible.builtin.file:
+        path: /home/ansible
+        state: directory
+        owner: ansible
+        group: ansible
+        mode: "0700"
+
+    - name: Add SSH key for ansible user
+      ansible.posix.authorized_key:
+        user: ansible
+        key: "{{ lookup('file', '/home/semaphore/inventory/ansible.pub') }}"
+        state: present
+        exclusive: true
+      become: true
