@@ -1,0 +1,17 @@
+---
+- name: Initialise a new Fedora VM
+  hosts: all
+  become: true
+  become_method: ansible.builtin.sudo
+
+  tasks:
+    - name: Führe DNF Update aus
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_only: true
+
+    - name: Install qemu-guest-agent
+      ansible.builtin.dnf:
+        name: qemu-guest-agent
+        state: present
