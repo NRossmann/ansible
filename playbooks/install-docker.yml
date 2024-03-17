@@ -61,10 +61,9 @@
     - name: Curl Dockge Compose file
       ansible.builtin.command: curl https://raw.githubusercontent.com/louislam/dockge/master/compose.yaml --output compose.yaml
       args:
-        creates: /opt/dockge
+        chdir: /opt/dockge
 
     - name: Create and start services
       ansible.builtin.command: docker compose up -d
       args:
-        creates: /opt/dockge
-        
+        chdir: /opt/dockge
