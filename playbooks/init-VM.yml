@@ -61,6 +61,13 @@
             name: docker
             state: started
             enabled: yes
+
+        - name: Add user 'nross' to the docker group
+          user:
+            name: "nross"
+            groups: docker
+            append: yes
+
     - name: Add Ansible User
       block:
         - name: Add user 'ansible'
@@ -84,8 +91,8 @@
             user: ansible
             key: "{{ lookup('file', '/home/semaphore/inventory/ansible.pub') }}"
             state: present
-            exclusive: yes
-          become: yes
+            exclusive: true
+          become: true
 
     - name: Setup dotfiles
       block:
@@ -103,7 +110,7 @@
           git:
             repo: https://github.com/NRossmann/dotfiles.git
             dest: "{{ ansible_env.HOME }}/dotfiles"
-            clone: yes
+            clone: true
 
         - name: Delete .bashrc file
           file:
@@ -122,3 +129,24 @@
           args:
             chdir: "{{ ansible_env.HOME }}/dotfiles"
           when: cd_output is succeeded
+
+    - name: Start Dockge
+      block:
+        - name: Create directories /opt/dockge and /opt/stacks
+          file:
+            path: "{{ item }}"
+            state: directory
+            mode: '0755'
+          loop:
+            - /opt/dockge
+            - /opt/stacks
+
+        - name: Download compose.yaml file
+          get_url:
+            url: "https://raw.githubusercontent.com/louislam/dockge/master/compose.yaml"
+            dest: "/opt/dockge/compose.yml"
+
+        - name: Run docker-compose up
+          command: "docker-compose up -d"
+          args:
+            chdir: "/opt/dockge"
