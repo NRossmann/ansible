@@ -63,6 +63,7 @@
         url: "https://raw.githubusercontent.com/louislam/dockge/master/compose.yaml"
         dest: "/opt/dockge/compose.yml"
         mode: "764"
+        validate_certs: false
 
     - name: Create and start services
       community.docker.docker_compose:
