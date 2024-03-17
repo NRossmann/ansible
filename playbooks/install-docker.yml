@@ -58,11 +58,19 @@
         - /opt/dockge
         - /opt/stacks
 
-    - name: Download compose.yaml file
-      ansible.builtin.shell: curl https://raw.githubusercontent.com/louislam/dockge/master/compose.yaml --output compose.yaml
-      args:
-        chdir: /opt/dockge
-        
+    - name: Make HTTP request to the website
+      ansible.builtin.uri:
+        url: "https://raw.githubusercontent.com/louislam/dockge/master/compose.yaml"
+        return_content: true
+      register: website_response
+
+    - name: Save website content to a file
+      ansible.builtin.copy:
+        content: "{{ website_response.content }}"
+        dest: "/opt/dockge/compose.yaml"
+        owner: nross
+        group: nross
+        mode: '764'
 
     - name: Create and start services
       community.docker.docker_compose:
