@@ -4,14 +4,127 @@
   become: true
   become_method: ansible.builtin.sudo
 
-  tasks:
-    - name: Führe DNF Update aus
-      ansible.builtin.dnf:
-        name: "*"
-        state: latest
-        update_only: true
+  vars:
+    ansible_user_password: "{{ lookup('env', 'ANSIBLE_PASSWORD') | password_hash('sha512') }}"
 
-    - name: Install qemu-guest-agent
-      ansible.builtin.dnf:
-        name: qemu-guest-agent
-        state: present
+  tasks:
+    - name: Intial Update and Install of requierd packages
+      block:
+       - name: Führe DNF Update aus
+         ansible.builtin.dnf:
+           name: "*"
+           state: latest
+           update_only: true
+
+       - name: Install qemu-guest-agent
+         ansible.builtin.dnf:
+           name: qemu-guest-agent
+           state: present
+
+       - name: Install required packages
+         dnf:
+           name: "{{ item }}"
+           state: present
+         loop:
+           - dnf-plugins-core
+           - dnf-utils
+           - device-mapper-persistent-data
+           - lvm2
+           - git
+           - which
+           - stow
+           - neovim
+           - tmux
+           - npm
+           - fd-fing
+           - the_silver_searcher
+           - nmap
+
+    - name: Install and enable Docker
+      block:
+       - name: Add Docker CE repository
+         dnf_repository:
+           name: docker-ce
+           description: Docker CE Repository
+           baseurl: https://download.docker.com/linux/fedora/$releasever/$basearch/stable
+           gpgcheck: yes
+           enabled: yes
+           gpgkey: https://download.docker.com/linux/fedora/gpg
+
+       - name: Install Docker CE
+         dnf:
+           name: "{{ item }}"
+           state: present
+         loop:
+           - docker-ce
+           - docker-ce-cli
+           - containerd.io
+           - docker-compose-plugin
+
+       - name: Start Docker service
+         service:
+           name: docker
+           state: started
+           enabled: yes
+    - name: Add Ansible User
+      block:
+       - name: Add user 'ansible'
+         user:
+           name: ansible
+           shell: /bin/bash
+           password: "{{ ansible_user_password }}"
+           groups: wheel, docker
+           append: yes
+         become: yes
+
+       - name: Ensure .ssh directory exists for ansible user
+         file:
+           path: /home/ansible/.ssh
+           state: directory
+           owner: ansible
+           group: ansible
+           mode: '0700'
+
+       - name: Add SSH key for ansible user
+         authorized_key:
+           user: ansible
+           key: "{{ lookup('file', '/home/semaphore/inventory/ansible.pub') }}"
+           state: present
+           exclusive: yes
+         become: yes
+
+    - name: Setup dotfiles
+      block:
+        - name: Set Git user.name
+          command: git config --global user.name "NRossmann"
+          register: git_user_name
+          changed_when: git_user_name.rc != 0
+
+        - name: Set Git user.email
+          command: git config --global user.email nrossmann@gmx.de
+          register: git_user_email
+          changed_when: git_user_email.rc != 0
+
+        - name: Clone dotfiles repository
+         git:
+           repo: https://github.com/NRossmann/dotfiles.git
+           dest: "{{ ansible_env.HOME }}/dotfiles"
+           clone: yes
+
+        - name: Delete .bashrc file
+          file:
+            path: "{{ ansible_env.HOME }}/.bashrc"
+            state: absent
+
+        - name: Change directory to dotfiles
+          shell: cd "{{ ansible_env.HOME }}/dotfiles"
+          args:
+            chdir: "{{ ansible_env.HOME }}/dotfiles"
+          register: cd_output
+          changed_when: false
+
+        - name: Stow dotfiles
+          shell: stow */
+          args:
+            chdir: "{{ ansible_env.HOME }}/dotfiles"
+          when: cd_output is succeeded
