@@ -17,5 +17,8 @@
         name: qemu-guest-agent
         state: present
 
-    - name: Unconditionally reboot the machine with all defaults
-      ansible.builtin.reboot:
+    - name: Ensure qemu-guest-agent service is started and enabled
+      systemd:
+        name: qemu-guest-agent
+        state: started
+        enabled: yes 
