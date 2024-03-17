@@ -36,7 +36,7 @@
             - neovim
             - tmux
             - npm
-            - fd-fing
+            - fd-find
             - the_silver_searcher
             - nmap
 
@@ -45,7 +45,7 @@
         - name: Add Docker CE repository
           command:
             cmd: dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
-            warn: false 
+            warn: false
 
         - name: Install Docker CE
           dnf:
