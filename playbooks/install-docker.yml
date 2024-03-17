@@ -64,6 +64,7 @@
         creates: /opt/dockge
 
     - name: Create and start services
-      community.docker.docker_compose:
-        project_src: /opt/dockge
-      register: output
+      ansible.builtin.command: docker compose up -d
+      args:
+        creates: /opt/dockge
+        
