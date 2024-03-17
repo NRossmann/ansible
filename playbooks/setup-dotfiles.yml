@@ -28,5 +28,4 @@
     - name: Stow dotfiles
       ansible.builtin.shell: stow */
       args:
-        chdir: "/home/nross/dotfiles"
-      when: cd_output is succeeded
+        chdir: /home/nross/dotfiles
