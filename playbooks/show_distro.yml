@@ -1,7 +1,0 @@
----
-- name: Gather Ansible Facts
-  hosts: all
-  tasks:
-    - name: Show Ansible Facts
-      debug:
-        msg: "Distribution on {{ inventory_hostname }} is {{ ansible_distribution }}"
