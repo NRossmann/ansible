@@ -4,6 +4,12 @@
   become: true
 
   tasks:
+    - name: Führe DNF Update aus
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_only: true
+
     - name: Install required packages
       ansible.builtin.dnf:
         name: "{{ item }}"
