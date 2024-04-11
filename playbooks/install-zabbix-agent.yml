@@ -1,0 +1,22 @@
+---
+- name: Deploy Zabbix Agent Docker Container
+  hosts: all
+  become: true
+  tasks:
+    - name: Get hostname of the machine
+      command: hostname
+      register: hostname_result
+
+    - name: Deploy Zabbix Agent Container
+      docker_container:
+        name: zabbix-agent
+        image: zabbix/zabbix-agent:latest
+        env:
+          ZBX_HOSTNAME: "{{ hostname_result.stdout }}"
+          ZBX_SERVER_HOST: "10.3.1.32"
+        init: true
+        detach: true
+        privileged: true
+        volumes:
+            - "/:/rootfs:ro"
+            - "/var/run:/var/run"
