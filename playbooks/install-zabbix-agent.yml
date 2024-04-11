@@ -11,6 +11,7 @@
       docker_container:
         name: zabbix-agent
         image: zabbix/zabbix-agent:latest
+        restart_policy: "unless-stopped"
         env:
           ZBX_HOSTNAME: "{{ hostname_result.stdout }}"
           ZBX_SERVER_HOST: "10.3.1.32"
